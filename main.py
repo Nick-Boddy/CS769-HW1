@@ -138,6 +138,7 @@ def main():
     _seed = os.environ.get("MINNN_SEED", 12341)
     random.seed(_seed)
     np.random.seed(_seed)
+    torch.manual_seed(_seed)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     # Read datasets
