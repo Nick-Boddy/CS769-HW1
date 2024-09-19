@@ -41,7 +41,7 @@ def load_embedding(vocab, emb_file, emb_size):
     """
     emb_matrix = np.random.uniform(-.08, .08, size=(len(vocab), emb_size))
 
-    with open(emb_file, 'r') as f:
+    with open(emb_file, 'r', encoding='utf-8') as f:
         for line in f:
             tokens = line.split()
             word = tokens[0]
@@ -78,7 +78,7 @@ class DanModel(BaseModel):
         # FeedForward
         layers = []
         for i in range(0, self.args.hid_layer):
-            layer = nn.Linear(self.args.emb_size, self.args.hid_size)
+            layer = nn.Linear(self.args.emb_size if i == 0 else self.args.hid_size, self.args.hid_size)
             layers.append(layer)
             layers.append(nn.ReLU())
             layers.append(nn.Dropout(self.args.hid_drop))
@@ -97,8 +97,9 @@ class DanModel(BaseModel):
 
         # using kaiming uniform because of the hidden layers using ReLU activations
         for layer in self.hidden_layers:
-            nn.init.kaiming_uniform_(layer.weight, nonlinearity='relu')
-            nn.init.constant_(layer.bias, 0)
+            if isinstance(layer, nn.Linear):
+                nn.init.kaiming_uniform_(layer.weight, nonlinearity='relu')
+                nn.init.constant_(layer.bias, 0)
         
         nn.init.xavier_uniform_(self.output_layer.weight)
         nn.init.constant_(self.output_layer.bias, 0)
@@ -109,8 +110,9 @@ class DanModel(BaseModel):
         Pass hyperparameters explicitly or use self.args to access the hyperparameters.
         """
         emb_matrix = load_embedding(self.vocab, self.args.emb_file, self.args.emb_size)
-        emb_tensor = torch.tensor(emb_matrix, torch.float32)
+        emb_tensor = torch.tensor(emb_matrix, dtype=torch.float32)
         self.embedding.weight.data.copy_(emb_tensor)
+        #self.embedding.weight.requires_grad = False
 
     def forward(self, x):
         """

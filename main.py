@@ -160,6 +160,7 @@ def main():
     ntags = len(tag_vocab)
     print('nwords', nwords, 'ntags', ntags)
     model = mn.DanModel(args, word_vocab, len(tag_vocab)).to(device)
+    print(model)
     loss_func = nn.CrossEntropyLoss()
     optimizer = torch.optim.Adagrad(model.parameters(), lr=args.lrate, lr_decay=args.lrate_decay)
 
@@ -171,7 +172,6 @@ def main():
     for epoch in range(args.max_train_epoch):
         for batch in data_iter(train_data, batch_size=args.batch_size, shuffle=True):
             train_iter += 1
-
             X = pad_sentences(batch[0], word_vocab['<pad>'])
             X = torch.LongTensor(X).to(device)
             Y = torch.LongTensor(batch[1]).to(device)
