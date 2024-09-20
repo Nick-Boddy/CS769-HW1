@@ -73,7 +73,7 @@ class DanModel(BaseModel):
         Pass hyperparameters explicitly or use self.args to access the hyperparameters.
         """
         # Embedding
-        self.embedding = nn.Embedding(len(self.vocab), self.args.emb_size)
+        self.embedding = nn.Embedding(len(self.vocab), self.args.emb_size, padding_idx=self.vocab['<pad>'])
 
         # FeedForward
         layers = []
@@ -125,9 +125,21 @@ class DanModel(BaseModel):
         Return:
             scores: (torch.FloatTensor), [batch_size, ntags]
         """
-        embed = self.embedding(x)
-        # implement embedding dropout here maybe?
-        avg_embed = embed.mean(dim=1)
+        embed = self.embedding(x) # [batch_size, seq_len, emb_size]
+
+        mask = (x != self.vocab['<pad>']).unsqueeze(-1).float().to(embed.device) # [batch_size, seq_len, 1]
+
+        # word dropout if in training
+        if self.training:
+            drop_mask = (torch.rand(embed.size()[:2]) > self.args.word_drop).unsqueeze(-1).float().to(embed.device)
+            # combine the drop_mask with the mask for padding
+            mask = mask * drop_mask
+
+        masked_embed = embed * mask
+        sum_embed = masked_embed.sum(dim=1) # [batch_size, emb_size]
+        count_embed = torch.clamp(mask.sum(dim=1), min=1) # [batch_size, 1]
+        avg_embed = sum_embed / count_embed
+
         ff_output = self.hidden_layers(avg_embed)
         scores = self.output_layer(ff_output)
         return scores

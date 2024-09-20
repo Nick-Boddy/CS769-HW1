@@ -15,13 +15,15 @@ python main.py \
     --dev_output "${CAMPUSID}/${PREF}-dev-output.txt" \
     --test_output "${CAMPUSID}/${PREF}-test-output.txt" \
     --emb_size 300 \
-    --hid_size 400 \
+    --hid_size 600 \
     --hid_layer 2 \
+    --log_niter 100 \
+    --eval_niter 100 \
     --max_train_epoch 12 \
     --lrate 0.005 \
-    --lrate_decay 0.0001 \
+    --lrate_decay 0.00001 \
     --batch_size 10 \
-    --hid_drop 0.4 \
+    --hid_drop 0.5 \
     --word_drop 0.3 \
     --emb_file "glove.6B/glove.6B.300d.txt" \
     --model "${CAMPUSID}/${PREF}-model.pt"
@@ -41,9 +43,9 @@ python main.py \
     --eval_niter 100 \
     --max_train_epoch 12 \
     --lrate 0.005 \
-    --lrate_decay 0.0001 \
+    --lrate_decay 0.00001 \
     --batch_size 10 \
-    --hid_drop 0.4 \
+    --hid_drop 0.5 \
     --word_drop 0.3 \
     --emb_file "glove.6B/glove.6B.300d.txt" \
     --model "${CAMPUSID}/${PREF}-model.pt"
