@@ -18,9 +18,11 @@ python main.py \
     --hid_size 400 \
     --hid_layer 2 \
     --max_train_epoch 12 \
+    --lrate 0.005 \
     --lrate_decay 0.0001 \
-    --batch_size 20 \
-    --hid_drop 0.5 \
+    --batch_size 10 \
+    --hid_drop 0.4 \
+    --word_drop 0.3 \
     --emb_file "glove.6B/glove.6B.300d.txt" \
     --model "${CAMPUSID}/${PREF}-model.pt"
 
@@ -38,9 +40,11 @@ python main.py \
     --log_niter 100 \
     --eval_niter 100 \
     --max_train_epoch 12 \
-    --lrate_decay 0.0000 \
-    --batch_size 20 \
-    --hid_drop 0.5 \
+    --lrate 0.005 \
+    --lrate_decay 0.0001 \
+    --batch_size 10 \
+    --hid_drop 0.4 \
+    --word_drop 0.3 \
     --emb_file "glove.6B/glove.6B.300d.txt" \
     --model "${CAMPUSID}/${PREF}-model.pt"
 
